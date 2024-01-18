@@ -50,7 +50,7 @@ void writeEEPROM (int address, byte data) {
     data = data >> 1;
   }
 
-  // Pulse write-enable
+  // Pulse write-enable pin (equivalent to the RC 680 ns)
   digitalWrite(WRITE_EN, LOW);
   delayMicroseconds(1);
   digitalWrite(WRITE_EN, HIGH);
