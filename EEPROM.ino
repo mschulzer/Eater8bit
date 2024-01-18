@@ -58,13 +58,15 @@ void writeEEPROM (int address, byte data) {
 }
 
 // HELPER:- Dump the contents of the EEPROM
-void dump(const uint16_t address) {
-  char text[80];
-  for (int i = 0; i < 256; i += 16) {
+void dump(int address) {
+  
+  for (int i = 0; i <= 255; i += 16) {
     byte data[16];
-    for (int offset = 0; offset < 16; offset++) {
+    for (int offset = 0; offset <= 15; offset += 1) {
       data[offset] = readEEPROM(address + i + offset);
     }
+    
+    char text[80];
     sprintf(text, "%04x   %02x %02x %02x %02x %02x %02x %02x %02x  %02x %02x %02x %02x %02x %02x %02x %02x", address + i, 
                   data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], 
                   data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
