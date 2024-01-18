@@ -6,6 +6,7 @@
 #define EEPROM_D7 12
 #define WRITE_EN 13
 
+// HELPER:- setting the initial address
 void setAddress (int address, bool outputEnable) {
   // Process: put a bit on SHIFT_DATA -- pulse SHIFT_CLK; doing it twice for 16 bits
   shiftOut(SHIFT_DAT, SHIFT_CLK, MSBFIRST, (address >> 8) | (outputEnable ? 0x00 : 0x80));
@@ -17,13 +18,17 @@ void setAddress (int address, bool outputEnable) {
   digitalWrite(SHIFT_LAT, LOW);
 }
 
+
+// HELPER:- Reading the EEPROM
 byte readEEPROM (int address) {
   for (int pin = EEPROM_D0; pin <= EEPROM_D7; pin += 1) {
     pinMode(pin, INPUT); 
   }
-  
-  setAddress(address, /* outputEnable */ true);
+
+  // Set address and data
+  setAddress(address, true);
   byte data = 0;
+  
   // Read each pin and shift into byte of data
   for (int pin = EEPROM_D7; pin >= EEPROM_D0; pin -= 1) {
     data = (data << 1) + digitalRead(pin);
@@ -31,13 +36,15 @@ byte readEEPROM (int address) {
   return data;
 }
 
+// HELPER:- Writing to the EEPROM
 void writeEEPROM (int address, byte data) {
   for (int pin = EEPROM_D0; pin <= EEPROM_D7; pin += 1) {
     pinMode(pin, OUTPUT); 
   }
   
   // Set address and data
-  setAddress (address, /* outputEnable*/ false);
+  setAddress (address, false);
+  
   for (int pin = EEPROM_D0; pin <= EEPROM_D7; pin += 1) {
     digitalWrite(pin, data & 1);
     data = data >> 1;
@@ -50,6 +57,7 @@ void writeEEPROM (int address, byte data) {
   delay(10);
 }
 
+// HELPER:- Dump the contents of the EEPROM
 void dump(const uint16_t address) {
   char text[80];
   for (int i = 0; i < 256; i += 16) {
